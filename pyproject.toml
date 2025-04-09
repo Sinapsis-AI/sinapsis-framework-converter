@@ -1,0 +1,74 @@
+[project]
+name = "sinapsis-framework-converter"
+version = "0.1.0"
+description = "Sinapsis tool to convert models from one framework to another and can be used in AOT and JIT modes"
+authors = [
+    { name = "SinapsisAI", email = "dev@sinapsis.tech" }
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+dependencies = [
+    "sinapsis>=0.2.1",
+]
+
+[project.optional-dependencies]
+tensorflow = ["numpy==1.26.4", "tensorflow>=2.18.0", "tf2onnx>=1.16.1"]
+onnx = ["onnx>=1.17.0", "polygraphy>=0.49.9"]
+tensorrt = [
+    "torch-tensorrt==2.4.0",
+]
+torch = [
+    "torch==2.4.1",
+    "torchvision==0.19.1",
+]
+all = [
+    "sinapsis-framework-converter[dev,onnx,tensorflow,tensorrt,torch]",
+]
+
+
+[[tool.uv.index]]
+url = "https://pypi.sinapsis.tech/"
+
+[tool.uv.sources]
+sinapsis-framework-converter = { workspace = true }
+
+[tool.ruff]
+lint.select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "PLR6301",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+]
+lint.preview = true
+lint.ignore = ["ANN401"]
+line-length = 120
+show-fixes = true
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.2.0",
+    "ruff>=0.11.4",
+]
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs"
+Tutorials = "https://docs.sinapsis.tech/tutorials"
+Repository = "https://github.com/Sinapsis-AI/sinapsis-framework-converter.git"

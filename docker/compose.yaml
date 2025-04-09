@@ -1,0 +1,23 @@
+services:
+  sinapsis-framework-converter: &default
+    image: sinapsis-framework-converter:base
+
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+      ssh:
+        - default
+    shm_size: '8gb'
+    environment:
+      PYTHONPATH: /lib/python3.10/:/app/.venv/lib/python3.10/site-packages
+      LD_LIBRARY_PATH: /app/.venv/lib/python3.10/site-packages/nvidia/cublas/lib
+      CUDA_HOME: /usr/local/cuda-12.4
+    volumes:
+      - "~/.cache/sinapsis/:/root/.cache/sinapsis"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
