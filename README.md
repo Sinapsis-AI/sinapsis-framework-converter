@@ -76,7 +76,7 @@ pip install tensorflow[and-cuda]==2.18.0
 
 
 
-</details>
+
 <h2 id="features">🚀 Features</h2>
 
 <h3> Templates Supported</h3>
@@ -137,5 +137,7 @@ Tutorials for different projects within sinapsis are available at [sinapsis tuto
 <h2 id="license">🔍 License</h2>
 
 This project is licensed under the AGPLv3 license, which encourages open collaboration and sharing. For more details, please refer to the [LICENSE](LICENSE) file.
+
+The code under [framework converter](src/sinapsis_framework_converter/framework_converter/) is released under the [MIT](src/sinapsis_framework_converter/framework_converter/LICENSE) license. 
 
 For commercial use, please refer to our [official Sinapsis website](https://sinapsis.tech) for information on obtaining a commercial license.
