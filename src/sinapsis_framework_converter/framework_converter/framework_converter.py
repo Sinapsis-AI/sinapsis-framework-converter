@@ -4,7 +4,7 @@ from os.path import join
 from pathlib import Path
 
 from pydantic.dataclasses import dataclass
-from sinapsis_core.template_base import TemplateAttributes
+from sinapsis_core.template_base.base_models import TemplateAttributes
 from sinapsis_core.utils.env_var_keys import SINAPSIS_CACHE_DIR
 
 

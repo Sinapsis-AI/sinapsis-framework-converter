@@ -3,7 +3,8 @@ from abc import abstractmethod
 from typing import Any, Type
 
 from sinapsis_core.data_containers.data_packet import DataContainer
-from sinapsis_core.template_base import Template, TemplateAttributes
+from sinapsis_core.template_base import Template
+from sinapsis_core.template_base.base_models import TemplateAttributes
 from sinapsis_core.utils.logging_utils import sinapsis_logger
 
 from sinapsis_framework_converter.framework_converter.framework_converter import (

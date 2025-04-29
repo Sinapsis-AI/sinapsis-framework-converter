@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Any, cast
+from typing import cast
 
 from sinapsis_framework_converter.framework_converter.framework_converter_trt import (
     FrameworkConverterTRT,

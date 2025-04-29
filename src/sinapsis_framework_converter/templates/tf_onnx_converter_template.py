@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Optional, cast
+from typing import Optional, cast
 
-# from sinapsis_framework_converter.framework_converter.framework_converter import (
-#     DLFrameworkConverter,
-# )
 from sinapsis_framework_converter.framework_converter.framework_converter_tf import (
     FrameworkConverterTFONNX,
 )
