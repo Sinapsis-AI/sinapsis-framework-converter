@@ -4,7 +4,7 @@ from typing import Any, Type
 
 from sinapsis_core.data_containers.data_packet import DataContainer
 from sinapsis_core.template_base import Template
-from sinapsis_core.template_base.base_models import TemplateAttributes
+from sinapsis_core.template_base.base_models import OutputTypes, TemplateAttributes, UIPropertiesMetadata
 from sinapsis_core.utils.logging_utils import sinapsis_logger
 
 from sinapsis_framework_converter.framework_converter.framework_converter import (
@@ -45,6 +45,7 @@ class FrameworkConverterBase(Template):
 
     AttributesBaseModel = FrameworkConverterAttributes
     _EXPORTER: Type[DLFrameworkConverter]
+    UIProperties = UIPropertiesMetadata(category="ModelConversion", output_type=OutputTypes.MULTIMODAL)
 
     def __init__(self, attributes: dict[str, Any]) -> None:
         """
