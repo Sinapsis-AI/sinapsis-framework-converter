@@ -6,10 +6,14 @@ from keras import Model, models
 from sinapsis_framework_converter.framework_converter.framework_converter_keras_tf import (
     FrameworkConverterKerasTF,
 )
+from sinapsis_framework_converter.helpers.tags import Tags
 from sinapsis_framework_converter.templates.framework_converter_base import (
     FrameworkConverterAttributes,
     FrameworkConverterBase,
 )
+
+KerasTFConverterUIProperties = FrameworkConverterBase.UIProperties
+KerasTFConverterUIProperties.tags.extend([Tags.KERAS, Tags.TENSORFLOW])
 
 
 class KerasTensorFlowConverter(FrameworkConverterBase):
@@ -37,6 +41,8 @@ class KerasTensorFlowConverter(FrameworkConverterBase):
 
 
     """
+
+    UIProperties = KerasTFConverterUIProperties
 
     class AttributesBaseModel(FrameworkConverterAttributes):
         """Additional attributes for the template initialization.

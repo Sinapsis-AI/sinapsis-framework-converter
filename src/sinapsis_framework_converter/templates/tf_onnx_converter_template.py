@@ -4,10 +4,14 @@ from typing import Optional, cast
 from sinapsis_framework_converter.framework_converter.framework_converter_tf import (
     FrameworkConverterTFONNX,
 )
+from sinapsis_framework_converter.helpers.tags import Tags
 from sinapsis_framework_converter.templates.framework_converter_base import (
     FrameworkConverterAttributes,
     FrameworkConverterBase,
 )
+
+TF_ONNXConverterUIProperties = FrameworkConverterBase.UIProperties
+TF_ONNXConverterUIProperties.tags.extend([Tags.ONNX, Tags.TENSORFLOW])
 
 
 class TensorFlowONNXConverter(FrameworkConverterBase):
@@ -33,6 +37,7 @@ class TensorFlowONNXConverter(FrameworkConverterBase):
 
     """
 
+    UIProperties = TF_ONNXConverterUIProperties
     _EXPORTER = FrameworkConverterTFONNX
 
     class AttributesBaseModel(FrameworkConverterAttributes):

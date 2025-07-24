@@ -7,10 +7,14 @@ from torchvision import models
 from sinapsis_framework_converter.framework_converter.framework_converter_torch import (
     FrameworkConverterTorch,
 )
+from sinapsis_framework_converter.helpers.tags import Tags
 from sinapsis_framework_converter.templates.framework_converter_base import (
     FrameworkConverterAttributes,
     FrameworkConverterBase,
 )
+
+TorchONNXConverterUIProperties = FrameworkConverterBase.UIProperties
+TorchONNXConverterUIProperties.tags.extend([Tags.PYTORCH, Tags.ONNX])
 
 
 class TorchONNXConverter(FrameworkConverterBase):
@@ -37,6 +41,8 @@ class TorchONNXConverter(FrameworkConverterBase):
         width: 960
 
     """
+
+    UIProperties = TorchONNXConverterUIProperties
 
     class AttributesBaseModel(FrameworkConverterAttributes):
         """Attributes to instantiate the template

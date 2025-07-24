@@ -4,9 +4,13 @@ from typing import cast
 from sinapsis_framework_converter.framework_converter.framework_converter_trt import (
     FrameworkConverterTRT,
 )
+from sinapsis_framework_converter.helpers.tags import Tags
 from sinapsis_framework_converter.templates.framework_converter_base import (
     FrameworkConverterBase,
 )
+
+ONNXTRTConverterUIProperties = FrameworkConverterBase.UIProperties
+ONNXTRTConverterUIProperties.tags.extend([Tags.ONNX, Tags.TENSORRT])
 
 
 class ONNXTRTConverter(FrameworkConverterBase):
@@ -33,6 +37,7 @@ class ONNXTRTConverter(FrameworkConverterBase):
 
     """
 
+    UIProperties = ONNXTRTConverterUIProperties
     _EXPORTER = FrameworkConverterTRT
 
     def load_model(self) -> None:

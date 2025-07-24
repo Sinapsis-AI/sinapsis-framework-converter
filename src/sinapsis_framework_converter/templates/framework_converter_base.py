@@ -2,6 +2,7 @@
 from abc import abstractmethod
 from typing import Any, Type
 
+import torch
 from sinapsis_core.data_containers.data_packet import DataContainer
 from sinapsis_core.template_base import Template
 from sinapsis_core.template_base.base_models import OutputTypes, TemplateAttributes, UIPropertiesMetadata
@@ -10,6 +11,7 @@ from sinapsis_core.utils.logging_utils import sinapsis_logger
 from sinapsis_framework_converter.framework_converter.framework_converter import (
     DLFrameworkConverter,
 )
+from sinapsis_framework_converter.helpers.tags import Tags
 
 
 class FrameworkConverterAttributes(TemplateAttributes):
@@ -45,7 +47,11 @@ class FrameworkConverterBase(Template):
 
     AttributesBaseModel = FrameworkConverterAttributes
     _EXPORTER: Type[DLFrameworkConverter]
-    UIProperties = UIPropertiesMetadata(category="ModelConversion", output_type=OutputTypes.MULTIMODAL)
+    UIProperties = UIPropertiesMetadata(
+        category="ModelConversion",
+        output_type=OutputTypes.MULTIMODAL,
+        tags=[Tags.CONVERSION, Tags.FRAMEWORK_CONVERSION, Tags.MODEL_CONVERSION, Tags.MODELS],
+    )
 
     def __init__(self, attributes: dict[str, Any]) -> None:
         """
@@ -116,3 +122,8 @@ class FrameworkConverterBase(Template):
             self._set_generic_data(container, str(self.exporter.model_file_path().absolute()))
 
         return container
+
+    def reset_state(self, template_name: str | None = None) -> None:
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        super().reset_state(template_name)

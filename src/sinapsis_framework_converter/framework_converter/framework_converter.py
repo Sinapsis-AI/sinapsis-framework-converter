@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from functools import partialmethod
 from os.path import join
 from pathlib import Path
@@ -38,6 +39,12 @@ class DLFrameworkConverter:
 
     def __init__(self, attributes: TemplateAttributes) -> None:
         self.attributes = attributes
+        self.initialize_parent_save_dir()
+
+    def initialize_parent_save_dir(self) -> None:
+        """Creates save directory for exported models if not already exists."""
+        if not os.path.exists(self.PARENT_SAVE_DIR):
+            os.makedirs(self.PARENT_SAVE_DIR, exist_ok=True)
 
     def model_file_path(self, extension: str | None = None) -> Path:
         """Defines the model path by joining the values for model_name and extension"""

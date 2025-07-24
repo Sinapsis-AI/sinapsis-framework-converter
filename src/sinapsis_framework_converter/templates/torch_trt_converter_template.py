@@ -8,10 +8,14 @@ from torchvision import models
 from sinapsis_framework_converter.framework_converter.framework_converter_torch_trt import (
     FrameworkConverterTorchTRT,
 )
+from sinapsis_framework_converter.helpers.tags import Tags
 from sinapsis_framework_converter.templates.framework_converter_base import (
     FrameworkConverterAttributes,
     FrameworkConverterBase,
 )
+
+TorchTRTConverterUIProperties = FrameworkConverterBase.UIProperties
+TorchTRTConverterUIProperties.tags.extend([Tags.PYTORCH, Tags.TENSORRT])
 
 
 class TorchTRTConverter(FrameworkConverterBase):
@@ -42,6 +46,7 @@ class TorchTRTConverter(FrameworkConverterBase):
 
     """
 
+    UIProperties = TorchTRTConverterUIProperties
     _EXPORTER = FrameworkConverterTorchTRT
 
     class AttributesBaseModel(FrameworkConverterAttributes):
