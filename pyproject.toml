@@ -13,6 +13,7 @@ dependencies = [
     "sinapsis>=0.2.1",
 ]
 
+
 [project.optional-dependencies]
 tensorflow = ["numpy==1.26.4", "tensorflow>=2.18.0", "tf2onnx>=1.16.1"]
 onnx = ["onnx>=1.17.0", "polygraphy>=0.49.9"]
