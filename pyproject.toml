@@ -1,6 +1,6 @@
 [project]
 name = "sinapsis-framework-converter"
-version = "0.1.5"
+version = "0.1.6"
 description = "Sinapsis tool to convert models from one framework to another and can be used in AOT and JIT modes"
 authors = [
     { name = "SinapsisAI", email = "dev@sinapsis.tech" }
