@@ -1,6 +1,6 @@
 [project]
 name = "sinapsis-framework-converter"
-version = "0.1.6"
+version = "0.1.8"
 description = "Sinapsis tool to convert models from one framework to another and can be used in AOT and JIT modes"
 authors = [
     { name = "SinapsisAI", email = "dev@sinapsis.tech" }
@@ -12,7 +12,6 @@ requires-python = ">=3.10"
 dependencies = [
     "sinapsis>=0.2.1",
 ]
-
 
 [project.optional-dependencies]
 tensorflow = ["numpy==1.26.4", "tensorflow>=2.18.0", "tf2onnx>=1.16.1"]
