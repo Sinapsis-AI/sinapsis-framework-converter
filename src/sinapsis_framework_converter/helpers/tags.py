@@ -2,7 +2,7 @@
 from enum import Enum
 
 
-class Tags(Enum):
+class Tags(str, Enum):
     CONVERSION = "conversion"
     FRAMEWORK_CONVERSION = "framework_conversion"
     KERAS = "keras"

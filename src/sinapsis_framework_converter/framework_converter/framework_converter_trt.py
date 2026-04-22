@@ -5,8 +5,8 @@ from pathlib import Path
 from polygraphy.backend.trt import (
     CreateConfig,
     SaveEngine,
-    engine_from_network,
-    network_from_onnx_path,
+    engine_from_network,  # ty: ignore[unresolved-import]
+    network_from_onnx_path,  # ty: ignore[unresolved-import]
 )
 from sinapsis_core.utils.logging_utils import sinapsis_logger
 

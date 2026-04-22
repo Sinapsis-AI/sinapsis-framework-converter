@@ -16,7 +16,8 @@ from sinapsis_framework_converter.templates.framework_converter_base import (
 )
 
 KerasTFConverterUIProperties = FrameworkConverterBase.UIProperties
-KerasTFConverterUIProperties.tags.extend([Tags.KERAS, Tags.TENSORFLOW])
+if KerasTFConverterUIProperties.tags is not None:
+    KerasTFConverterUIProperties.tags.extend([Tags.KERAS, Tags.TENSORFLOW])
 
 
 class KerasTensorFlowConverter(FrameworkConverterBase):
@@ -57,14 +58,16 @@ class KerasTensorFlowConverter(FrameworkConverterBase):
 
     _EXPORTER = FrameworkConverterKerasTF
 
+    attributes: AttributesBaseModel
+
     def __init__(self, attributes: TemplateAttributeType) -> None:
         super().__init__(attributes)
-        self.attributes.root_dir = self.attributes.root_dir or SINAPSIS_CACHE_DIR
+        self.root_dir = self.attributes.root_dir or SINAPSIS_CACHE_DIR
 
     def load_model(self) -> Model:
         """Using the models module from Keras, loads the model from the saved path
         and returns a Model instance"""
-        return models.load_model(os.path.join(self.attributes.root_dir, self.attributes.model_path))
+        return models.load_model(os.path.join(self.root_dir, self.attributes.model_path))
 
     def convert_model(self) -> None:
         """Converts model using export_keras_to_tf method from FrameworkConverterKerasTF"""

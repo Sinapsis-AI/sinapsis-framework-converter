@@ -1,6 +1,6 @@
 [project]
 name = "sinapsis-framework-converter"
-version = "0.1.9"
+version = "0.1.10"
 description = "Sinapsis tool to convert models from one framework to another and can be used in AOT and JIT modes"
 authors = [
     { name = "SinapsisAI", email = "dev@sinapsis.tech" }
@@ -18,11 +18,11 @@ dependencies = [
 tensorflow = ["numpy==1.26.4", "tensorflow>=2.18.0", "tf2onnx>=1.16.1"]
 onnx = ["onnx>=1.17.0", "polygraphy>=0.49.9"]
 tensorrt = [
-    "torch-tensorrt==2.4.0",
+    "torch-tensorrt>=2.4.0",
 ]
 torch = [
-    "torch==2.4.1",
-    "torchvision==0.19.1",
+    "torch>=2.4.1",
+    "torchvision>=0.19.1",
 ]
 all = [
     "sinapsis-framework-converter[dev,onnx,tensorflow,tensorrt,torch]",
@@ -67,7 +67,11 @@ show-fixes = true
 dev = [
     "pre-commit>=4.2.0",
     "ruff>=0.11.4",
+    "ty>=0.0.29",
 ]
+
+[tool.ty.analysis]
+allowed-unresolved-imports = ["tensorrt.**",]
 
 [project.urls]
 Homepage = "https://sinapsis.tech"

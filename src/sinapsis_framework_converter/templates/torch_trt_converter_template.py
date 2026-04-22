@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from typing import cast
+from typing import Sequence, cast
 
-from torch import nn
+from torch import Tensor, nn, randn
 from torchvision import models
 
 from sinapsis_framework_converter.framework_converter.framework_converter_torch_trt import (
@@ -15,7 +15,8 @@ from sinapsis_framework_converter.templates.framework_converter_base import (
 )
 
 TorchTRTConverterUIProperties = FrameworkConverterBase.UIProperties
-TorchTRTConverterUIProperties.tags.extend([Tags.PYTORCH, Tags.TENSORRT])
+if TorchTRTConverterUIProperties.tags is not None:
+    TorchTRTConverterUIProperties.tags.extend([Tags.PYTORCH, Tags.TENSORRT])
 
 
 class TorchTRTConverter(FrameworkConverterBase):
@@ -70,6 +71,8 @@ class TorchTRTConverter(FrameworkConverterBase):
         height: int = 940
         width: int = 940
 
+    attributes: AttributesBaseModel
+
     def load_model(self) -> nn.Module:
         """Loads the torchvision model to be exported based on attributes model_name.
 
@@ -89,5 +92,13 @@ class TorchTRTConverter(FrameworkConverterBase):
             torch_model=self.model,
             optimization_level=self.attributes.optimization_level,
             workspace_size=self.attributes.workspace_size,
-            requires_full_compulation=self.attributes.require_full_compilation,
+            require_full_compilation=self.attributes.require_full_compilation,
         )
+
+    def _torch_dummy_image_input(self, device: str = "cuda") -> Sequence[Tensor]:
+        """Creates a dummy torch tensor as the image input
+        Args:
+            device (str) : The device that the tensor is returned with.
+            Options are ''cpu'' and ''cuda'' if available
+        """
+        return [randn(1, 3, self.attributes.height, self.attributes.width).to(device)]

@@ -50,7 +50,8 @@ class DLFrameworkConverter:
         """Defines the model path by joining the values for model_name and extension"""
         if extension is None:
             extension = ""
-        return Path(join(self.PARENT_SAVE_DIR, f"{self.attributes.model_name}{extension}"))
+        name = self.attributes.model_name  # ty: ignore[unresolved-attribute]
+        return Path(join(self.PARENT_SAVE_DIR, f"{name}{extension}"))
 
     onnx_model_file_path = partialmethod(model_file_path, ModelExtensions.ONNX_FILE_EXTENSION)
 
@@ -62,6 +63,6 @@ class DLFrameworkConverter:
 
     def force_export(self, model_path: Path) -> bool:
         """Method that defines whether the model needs to be compiled, even if it exists"""
-        if self.attributes.force_compilation:
+        if self.attributes.force_compilation:  # ty: ignore[unresolved-attribute]
             return True
         return bool(not model_path.exists())

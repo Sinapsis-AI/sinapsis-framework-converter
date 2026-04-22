@@ -14,7 +14,8 @@ from sinapsis_framework_converter.templates.framework_converter_base import (
 )
 
 TorchONNXConverterUIProperties = FrameworkConverterBase.UIProperties
-TorchONNXConverterUIProperties.tags.extend([Tags.PYTORCH, Tags.ONNX])
+if TorchONNXConverterUIProperties.tags is not None:
+    TorchONNXConverterUIProperties.tags.extend([Tags.PYTORCH, Tags.ONNX])
 
 
 class TorchONNXConverter(FrameworkConverterBase):
@@ -57,6 +58,7 @@ class TorchONNXConverter(FrameworkConverterBase):
         width: int = 960
 
     _EXPORTER = FrameworkConverterTorch
+    attributes: AttributesBaseModel
 
     def load_model(self) -> nn.Module:
         """Loads the torchvision model to be exported based on attributes model_name.
@@ -70,4 +72,9 @@ class TorchONNXConverter(FrameworkConverterBase):
     def convert_model(self) -> None:
         """Converts model using export_torch_to_onnx method from FrameworkConverterTorch"""
         self.exporter = cast(FrameworkConverterTorch, self.exporter)
-        self.exporter.export_torch_to_onnx(torch_model=self.model, opset_version=self.attributes.opset_version)
+        self.exporter.export_torch_to_onnx(
+            height=self.attributes.height,
+            width=self.attributes.width,
+            torch_model=self.model,
+            opset_version=self.attributes.opset_version,
+        )

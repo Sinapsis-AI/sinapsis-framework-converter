@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import typing
+from abc import abstractmethod
 from pathlib import Path
 from typing import Any, Callable, Sequence
 
@@ -47,7 +48,11 @@ class FrameworkConverterTorchTRT(DLFrameworkConverter):
             return
 
         torch_model.eval().cuda()
-        dummy_input = model_inputs if model_inputs else self._torch_dummy_image_input()
+        dummy_input: Sequence[torch.Tensor]
+        if model_inputs is not None:
+            dummy_input = [model_inputs] if isinstance(model_inputs, torch.Tensor) else model_inputs
+        else:
+            dummy_input = self._torch_dummy_image_input()
         with torch.no_grad():
             trt_gm = torch_tensorrt.compile(
                 torch_model,
@@ -57,14 +62,14 @@ class FrameworkConverterTorchTRT(DLFrameworkConverter):
                 optimization_level=optimization_level,
                 require_full_compilation=require_full_compilation,
                 workspace_size=workspace_size,
-                **kwargs,
+                kwarg_inputs=kwargs,
             )
             self.save_optimised_model(trt_gm, dummy_input)
 
     def save_optimised_model(
         self,
         optimized_model: (torch.nn.Module | torch.jit.ScriptModule | torch.fx.GraphModule | Callable[..., Any]),
-        dummy_input: torch.Tensor | Sequence,
+        dummy_input: Sequence[torch.Tensor],
     ) -> None:
         """Method to save the model in a given path
         Args:
@@ -76,18 +81,18 @@ class FrameworkConverterTorchTRT(DLFrameworkConverter):
         sinapsis_logger.info(f"saving model: {model_path}")
         torch_tensorrt.save(
             optimized_model,
-            model_path,
+            str(model_path),
             inputs=dummy_input,
             output_format="exported_program",
         )
 
-    def _torch_dummy_image_input(self, device: str = "cuda") -> list[torch.Tensor]:
+    @abstractmethod
+    def _torch_dummy_image_input(self, device: str = "cuda") -> Sequence[torch.Tensor]:
         """Creates a dummy torch tensor as the image input
         Args:
             device (str) : The device that the tensor is returned with.
             Options are ''cpu'' and ''cuda'' if available
         """
-        return [torch.randn(1, 3, self.attributes.height, self.attributes.width).to(device)]
 
     @classmethod
     def load_model(cls, engine_path: str) -> torch.nn.Module:
@@ -121,12 +126,12 @@ class FrameworkConverterTorchScript(FrameworkConverterTorchTRT):
     def save_optimised_model(
         self,
         optimized_model: (torch.nn.Module | torch.jit.ScriptModule | torch.fx.GraphModule | Callable[..., Any]),
-        dummy_input: torch.Tensor | Sequence,
+        dummy_input: Sequence[torch.Tensor],
     ) -> None:
         """Saves the optimized model in the format ''torchscript''"""
         model_path = self.get_model_path()
         sinapsis_logger.info(f"saving model: {model_path}")
-        torch_tensorrt.save(optimized_model, model_path, inputs=dummy_input, output_format="torchscript")
+        torch_tensorrt.save(optimized_model, str(model_path), inputs=dummy_input, output_format="torchscript")
 
     @classmethod
     def load_model(cls, engine_path: str) -> torch.nn.Module:

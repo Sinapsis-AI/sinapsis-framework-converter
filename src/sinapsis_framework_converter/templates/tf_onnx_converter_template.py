@@ -11,7 +11,8 @@ from sinapsis_framework_converter.templates.framework_converter_base import (
 )
 
 TF_ONNXConverterUIProperties = FrameworkConverterBase.UIProperties
-TF_ONNXConverterUIProperties.tags.extend([Tags.ONNX, Tags.TENSORFLOW])
+if TF_ONNXConverterUIProperties.tags is not None:
+    TF_ONNXConverterUIProperties.tags.extend([Tags.ONNX, Tags.TENSORFLOW])
 
 
 class TensorFlowONNXConverter(FrameworkConverterBase):
@@ -46,6 +47,8 @@ class TensorFlowONNXConverter(FrameworkConverterBase):
         opset_version (Optional[int]) : The operator set version for ONNX."""
 
         opset_version: Optional[int] = None
+
+    attributes: AttributesBaseModel
 
     def load_model(self) -> None:
         """It returns None as there is no model to be

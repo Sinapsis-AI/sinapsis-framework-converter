@@ -10,7 +10,8 @@ from sinapsis_framework_converter.templates.framework_converter_base import (
 )
 
 ONNXTRTConverterUIProperties = FrameworkConverterBase.UIProperties
-ONNXTRTConverterUIProperties.tags.extend([Tags.ONNX, Tags.TENSORRT])
+if ONNXTRTConverterUIProperties.tags is not None:
+    ONNXTRTConverterUIProperties.tags.extend([Tags.ONNX, Tags.TENSORRT])
 
 
 class ONNXTRTConverter(FrameworkConverterBase):

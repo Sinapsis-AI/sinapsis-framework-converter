@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from typing import Any, Sequence
 
-import tensorrt as trt
 import torch
 from pydantic import StrictStr
 from sinapsis_core.utils.logging_utils import sinapsis_logger
+from tensorrt import Logger, Runtime
 from torch_tensorrt.fx import TRTModule
 
 from sinapsis_framework_converter.framework_converter.framework_converter import (
@@ -18,6 +18,8 @@ class FrameworkConverterTorch(DLFrameworkConverter):
     def export_torch_to_onnx(
         self,
         torch_model: torch.nn.Module,
+        height: int,
+        width: int,
         model_inputs: torch.Tensor | Sequence[torch.Tensor] | None = None,
         opset_version: int | None = None,
         **kwargs: dict[str, Any] | None,
@@ -37,17 +39,18 @@ class FrameworkConverterTorch(DLFrameworkConverter):
         if not self.force_export(onnx_model_path):
             return
         torch_model.eval().cpu()
-        dummy_input = model_inputs if model_inputs else self._torch_dummy_image_input()
+        dummy_input = model_inputs if model_inputs else self._torch_dummy_image_input(height, width)
         torch.onnx.export(
             torch_model,
-            dummy_input,
+            dummy_input,  # ty: ignore[invalid-argument-type]
             str(onnx_model_path.absolute()),
             opset_version=opset_version,
-            **kwargs,
+            kwargs=kwargs,
         )
         sinapsis_logger.info(f"Converted pytorch model to onnx, saved in: {onnx_model_path.absolute()}")
 
-    def _torch_dummy_image_input(self, device: str = "cpu") -> torch.Tensor:
+    @staticmethod
+    def _torch_dummy_image_input(height: int, width: int, device: str = "cpu") -> torch.Tensor:
         """Creates the dummy torch image used during model conversion. The size of dummy image is specified by the
             height and width attributes.
 
@@ -57,7 +60,7 @@ class FrameworkConverterTorch(DLFrameworkConverter):
         Returns:
             torch.Tensor: The resulting random torch image.
         """
-        return torch.randn(1, 3, self.attributes.height, self.attributes.width).to(device)
+        return torch.randn(1, 3, height, width).to(device)
 
     @classmethod
     def wrap_trt_engine_with_torch_trt(
@@ -75,7 +78,7 @@ class FrameworkConverterTorch(DLFrameworkConverter):
         """
         with open(engine_path, "rb") as f:
             engine_data = f.read()
-        trt_runtime = trt.Runtime(trt.Logger(trt.Logger.WARNING))
+        trt_runtime = Runtime(Logger(Logger.WARNING))
         trt_engine = trt_runtime.deserialize_cuda_engine(engine_data)
         return TRTModule(
             trt_engine,

@@ -5,7 +5,12 @@ from typing import Any, Type
 import torch
 from sinapsis_core.data_containers.data_packet import DataContainer
 from sinapsis_core.template_base import Template
-from sinapsis_core.template_base.base_models import OutputTypes, TemplateAttributes, UIPropertiesMetadata
+from sinapsis_core.template_base.base_models import (
+    OutputTypes,
+    TemplateAttributes,
+    TemplateAttributeType,
+    UIPropertiesMetadata,
+)
 from sinapsis_core.utils.logging_utils import sinapsis_logger
 
 from sinapsis_framework_converter.framework_converter.framework_converter import (
@@ -45,6 +50,7 @@ class FrameworkConverterBase(Template):
 
     """
 
+    attributes: FrameworkConverterAttributes
     AttributesBaseModel = FrameworkConverterAttributes
     _EXPORTER: Type[DLFrameworkConverter]
     UIProperties = UIPropertiesMetadata(
@@ -53,7 +59,7 @@ class FrameworkConverterBase(Template):
         tags=[Tags.CONVERSION, Tags.FRAMEWORK_CONVERSION, Tags.MODEL_CONVERSION, Tags.MODELS],
     )
 
-    def __init__(self, attributes: dict[str, Any]) -> None:
+    def __init__(self, attributes: TemplateAttributeType) -> None:
         """
         Initialize the FrameworkConverterBase with given attributes.
 

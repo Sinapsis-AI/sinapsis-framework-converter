@@ -2,12 +2,14 @@
 """TensorRT/Pytorch module Wrapper"""
 
 from dataclasses import dataclass
-from typing import Sequence, TypeAlias
+from typing import Sequence, TypeAlias, cast
 
 import numpy as np
 import tensorrt as trt
 import torch
 from sinapsis_core.utils.logging_utils import sinapsis_logger
+from tensorrt import Logger, Runtime, TensorIOMode, nptype
+from tensorrt.tensorrt import ICudaEngine, IExecutionContext
 
 if trt.__version__ < "10.1.0":
     raise RuntimeError(
@@ -55,7 +57,7 @@ class TensorrtTorchWrapper(torch.nn.Module):
     Attributes:
         - device (torch.device) : The device for the engine to run on. By default, is set to CUDA
         - engine (trt.tensorrt.ICudaEngin): Model loaded in the TensorRT engine
-        - context(trt.tensorrt.IExecutionContext) : Context for the enfine with the devide memory
+        - context(IExecutionContext) : Context for the enfine with the devide memory
         allocation strategy
         - input_bindings (dict[str, TRTModuleInputBinding]): Dictionary with the model input
         bindings attributes
@@ -66,8 +68,8 @@ class TensorrtTorchWrapper(torch.nn.Module):
     def __init__(self, engine_path: str, output_as_value_tuple: bool = False) -> None:
         super().__init__()
         self.device = torch.device("cuda")
-        self.engine: trt.tensorrt.ICudaEngine = self.load_trt_engine(engine_path)
-        self.context: trt.tensorrt.IExecutionContext = self.engine.create_execution_context()
+        self.engine: ICudaEngine = self.load_trt_engine(engine_path)
+        self.context: IExecutionContext = self.engine.create_execution_context()
         self.input_bindings, self.output_bindings = self._get_bindings()
         self.output_binding_ptrs: list[int] = [out.data_pointer for out in self.output_bindings.values()]
         self.output_as_value_tuple = output_as_value_tuple
@@ -75,11 +77,11 @@ class TensorrtTorchWrapper(torch.nn.Module):
     @staticmethod
     def load_trt_engine(
         engine_path: str,
-    ) -> trt.tensorrt.ICudaEngine:
+    ) -> ICudaEngine:
         """Using the tensorRT Runtime, deserializes the cuda engine from host memory"""
         with open(engine_path, "rb") as f:
             engine_data = f.read()
-        trt_runtime = trt.Runtime(trt.Logger(trt.Logger.WARNING))
+        trt_runtime = Runtime(Logger(Logger.WARNING))
         trt_engine = trt_runtime.deserialize_cuda_engine(engine_data)
         return trt_engine
 
@@ -101,10 +103,10 @@ class TensorrtTorchWrapper(torch.nn.Module):
 
         for tensor_idx in range(self.engine.num_io_tensors):
             tensor_name = self.engine.get_tensor_name(tensor_idx)
-            tensor_dtype = trt.nptype(self.engine.get_tensor_dtype(tensor_name))
+            tensor_dtype = nptype(self.engine.get_tensor_dtype(tensor_name))
             tensor_shape = self.engine.get_tensor_shape(tensor_name)
             binding_tensor = torch.from_numpy(np.empty(tensor_shape, dtype=tensor_dtype)).contiguous().to(self.device)
-            is_input = self.engine.get_tensor_mode(tensor_name) == trt.TensorIOMode.INPUT
+            is_input = self.engine.get_tensor_mode(tensor_name) == TensorIOMode.INPUT
             if is_input:
                 input_bindings[tensor_name] = TRTModuleInputBinding(
                     name=tensor_name,
@@ -137,6 +139,7 @@ class TensorrtTorchWrapper(torch.nn.Module):
         """
         # pending: add batch / dynamic shape support
         if isinstance(input_dict_or_tensor, dict):
+            input_dict_or_tensor = cast(dict, input_dict_or_tensor)
             if len(input_dict_or_tensor) != len(self.input_bindings):
                 raise ValueError(
                     f"This model takes {len(self.input_bindings)} input tensors, only got {len(input_dict_or_tensor)}"
