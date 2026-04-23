@@ -96,7 +96,7 @@ class FrameworkConverterTorchTRT(DLFrameworkConverter):
 
     @classmethod
     def load_model(cls, engine_path: str) -> torch.nn.Module:
-        """loads the a model previously saved using torch.export.save
+        """loads the model previously saved using torch.export.save
         Args:
             engine_path (str): model path or bytes-like object containing
             the model
@@ -111,7 +111,7 @@ class FrameworkConverterTorchTRT(DLFrameworkConverter):
 
 class FrameworkConverterTorchScript(FrameworkConverterTorchTRT):
     """Module to convert from Torch to Torchscript
-    Inheris functionality from FrameworkConverterTorchTRT
+    Inherits functionality from FrameworkConverterTorchTRT
     """
 
     def get_model_path(self) -> Path:
@@ -135,7 +135,7 @@ class FrameworkConverterTorchScript(FrameworkConverterTorchTRT):
 
     @classmethod
     def load_model(cls, engine_path: str) -> torch.nn.Module:
-        """loads the a model previously saved using torch.jit.save
+        """loads the model previously saved using torch.jit.save
         Args:
             engine_path (str): model path or bytes-like object containing
             the model

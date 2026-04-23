@@ -18,8 +18,6 @@ class FrameworkConverterTorch(DLFrameworkConverter):
     def export_torch_to_onnx(
         self,
         torch_model: torch.nn.Module,
-        height: int,
-        width: int,
         model_inputs: torch.Tensor | Sequence[torch.Tensor] | None = None,
         opset_version: int | None = None,
         **kwargs: dict[str, Any] | None,
@@ -39,7 +37,7 @@ class FrameworkConverterTorch(DLFrameworkConverter):
         if not self.force_export(onnx_model_path):
             return
         torch_model.eval().cpu()
-        dummy_input = model_inputs if model_inputs else self._torch_dummy_image_input(height, width)
+        dummy_input = model_inputs if model_inputs else self._torch_dummy_image_input()
         torch.onnx.export(
             torch_model,
             dummy_input,  # ty: ignore[invalid-argument-type]
@@ -49,8 +47,7 @@ class FrameworkConverterTorch(DLFrameworkConverter):
         )
         sinapsis_logger.info(f"Converted pytorch model to onnx, saved in: {onnx_model_path.absolute()}")
 
-    @staticmethod
-    def _torch_dummy_image_input(height: int, width: int, device: str = "cpu") -> torch.Tensor:
+    def _torch_dummy_image_input(self, device: str = "cpu") -> torch.Tensor:
         """Creates the dummy torch image used during model conversion. The size of dummy image is specified by the
             height and width attributes.
 
@@ -60,7 +57,12 @@ class FrameworkConverterTorch(DLFrameworkConverter):
         Returns:
             torch.Tensor: The resulting random torch image.
         """
-        return torch.randn(1, 3, height, width).to(device)
+        return torch.randn(
+            1,
+            3,
+            self.attributes.height,  # ty: ignore[unresolved-attribute]
+            self.attributes.width,  # ty: ignore[unresolved-attribute]
+        ).to(device)
 
     @classmethod
     def wrap_trt_engine_with_torch_trt(
@@ -73,7 +75,7 @@ class FrameworkConverterTorch(DLFrameworkConverter):
         Args:
             engine_path (str) :  Path to the model to be deserialized
             ordered_input_names (list[StrictStr]): Key values for the model input.
-            ordered_outputnames (list[StrictStr]): : Key valyues for the model outputs.
+            ordered_output_names (list[StrictStr]): : Key valyues for the model outputs.
                 Order should match that of the input bindings
         """
         with open(engine_path, "rb") as f:

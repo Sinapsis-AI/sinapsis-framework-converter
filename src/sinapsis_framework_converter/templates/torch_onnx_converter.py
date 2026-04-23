@@ -73,8 +73,6 @@ class TorchONNXConverter(FrameworkConverterBase):
         """Converts model using export_torch_to_onnx method from FrameworkConverterTorch"""
         self.exporter = cast(FrameworkConverterTorch, self.exporter)
         self.exporter.export_torch_to_onnx(
-            height=self.attributes.height,
-            width=self.attributes.width,
             torch_model=self.model,
             opset_version=self.attributes.opset_version,
         )

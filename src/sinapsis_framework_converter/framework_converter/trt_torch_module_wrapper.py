@@ -8,8 +8,7 @@ import numpy as np
 import tensorrt as trt
 import torch
 from sinapsis_core.utils.logging_utils import sinapsis_logger
-from tensorrt import Logger, Runtime, TensorIOMode, nptype
-from tensorrt.tensorrt import ICudaEngine, IExecutionContext
+from tensorrt import ICudaEngine, IExecutionContext, Logger, Runtime, TensorIOMode, nptype
 
 if trt.__version__ < "10.1.0":
     raise RuntimeError(
